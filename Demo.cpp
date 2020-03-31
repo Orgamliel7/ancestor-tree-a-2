@@ -32,9 +32,12 @@ int main() {
 	cout << T.find("great-great-grandfather") << endl;  // prints "Avraham"
 	try {
 		cout << T.find("uncle") << endl;  // throws an exception
-	} catch (exception ex) {
+	} catch (const exception& ex) {
 	 	cout << ex.what() << endl;  // prints "The tree cannot handle the 'uncle' relation"
 	}
+
+	T.remove("Avraham"); // removes Avraham and Terah
+	cout << T.relation("Terah") << endl;  // prints "unrelated"
 
     return 0;
 }
