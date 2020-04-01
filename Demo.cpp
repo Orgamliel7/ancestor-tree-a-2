@@ -15,8 +15,7 @@ int main() {
 	T.addMother("Yosef", "Rachel");
 	T.addFather("Yaakov", "Isaac");
 	T.addMother("Yaakov", "Rivka");
-	T.addFather("Isaac", "Avraham");
-	T.addFather("Avraham", "Terah");
+	T.addFather("Isaac", "Avraham").addFather("Avraham", "Terah");
 
 	T.display();                        // displays the tree in a human-friendly format.
 
