@@ -3,8 +3,10 @@
 CXX=clang++-9 
 CXXFLAGS=-std=c++2a
 
-HEADERS=FamilyTree.hpp
-OBJECTS=FamilyTree.o
+HEADERS=$(wildcard *.h*)
+# SOURCES=$(wildcard *.cpp)
+SOURCES=FamilyTree.cpp
+OBJECTS=$(subst .cpp,.o,$(SOURCES))
 
 run: demo
 	./$^
