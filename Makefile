@@ -3,21 +3,21 @@
 CXX=clang++-9 
 CXXFLAGS=-std=c++2a
 
-HEADERS=$(wildcard *.h*)
-# SOURCES=$(wildcard *.cpp)
-SOURCES=FamilyTree.cpp
-OBJECTS=$(subst .cpp,.o,$(SOURCES))
+TEACHER_SOURCES := Demo.cpp TestCounter.cpp Test.cpp
+STUDENT_HEADERS := $(wildcard *.h*)
+STUDENT_SOURCES := $(filter-out $(TEACHER_SOURCES), $(wildcard *.cpp))
+STUDENT_OBJECTS := $(subst .cpp,.o,$(STUDENT_SOURCES))
 
 run: demo
 	./$^
 
-demo: Demo.o $(OBJECTS)
+demo: Demo.o $(STUDENT_OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ -o demo
 
-test: TestCounter.o Test.o $(OBJECTS)
+test: TestCounter.o Test.o $(STUDENT_OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ -o test
 
-%.o: %.cpp $(HEADERS)
+%.o: %.cpp $(STUDENT_HEADERS)
 	$(CXX) $(CXXFLAGS) --compile $< -o $@
 
 clean:
