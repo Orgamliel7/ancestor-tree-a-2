@@ -1,35 +1,33 @@
 //
-// Created by shaharnik on 05/04/2020.
+// Created by tzach on 03/04/2020.
 //
-
-#ifndef ANCESTOR_TREE_A_FAMILYTREE_HPP
-#define ANCESTOR_TREE_A_FAMILYTREE_HPP
-#include <stdio.h>
+#pragma once
 #include <iostream>
 using namespace std;
-namespace family
-{
+#include <stdio.h>
+#include <string>
+#include <cmath>
+#include <cassert>
+namespace family{
     class Node{
     public:
-        Node (string name);
         string name;
         Node* father;
         Node* mother;
-        &Tree addRecF(string name, string father,Node* current);
-        &Tree addRecM(string name, string mother,Node* current);
+        Node(string name);
+        Node();
     };
-    class Tree{
-        Node* root;
-    public:
-        Tree (string s);
-        string to_string();
-        Tree addFather(string child, string father);
-        Tree addMother(string child, string mother);
-        string relation(string name);
-        string find(string motherORfather);
+     class Tree{
+     public:
+         Node* root;
+     public:
+         Tree(string name);
+        Tree& addFather(string rootName, string name2);
+        Tree& addMother(string rootName, string name2);
         void display();
-        Node remove(string s);
-
-    };
-}; // namespace family
-#endif //ANCESTOR_TREE_A_FAMILYTREE_HPP
+        std::string relation(string name);
+        std::string find(string name);
+        void remove(string name);
+        Node * findPos(Node *currentN, string name);
+     };
+}
