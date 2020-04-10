@@ -14,6 +14,8 @@ namespace family{
         string name;
         Node* father;
         Node* mother;
+        int depth;
+        string parent_type;
         Node(string name);
         Node();
     };
@@ -29,5 +31,7 @@ namespace family{
         std::string find(string name);
         void remove(string name);
         Node * findPos(Node *currentN, string name);
+
+         void print2DUtil(Node *root, int space);
      };
 }
