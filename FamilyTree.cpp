@@ -1,5 +1,5 @@
 //
-// Created by Tzach on 03/04/2020.
+// Created by Shahar & Tzach on 03/04/2020.
 //
 #include "FamilyTree.hpp"
 #define COUNT 10
@@ -100,10 +100,9 @@ using namespace family;
     };
     void Tree::display()
     {
-        printBT(this->root);
-        //print2DUtil(this->root, 0);
+        //printBT(this->root);
+        print2DUtil(this->root, 0);
     };
-
 
     string getRelationName(int depth)
     {
@@ -123,6 +122,7 @@ using namespace family;
         ans = ans + "grand";
         return ans;
     }
+
     string Tree::relation(string who)
     {
         Node *curr = findPos(this->root, who);
@@ -137,7 +137,23 @@ using namespace family;
             return "unrelated";
         }
     }
+void RemoveRec2(Node* root)
+{
+    if (root == nullptr)
+        return;
 
+    //Delete Left and Right Subtree first
+    RemoveRec2(root->father);
+    RemoveRec2(root->mother);
+
+    cout << "Deleting node: " << root->name << endl;
+    root->father=root->mother = nullptr;
+
+    // after deleting left and right subtree delete current node
+
+    delete root;
+    root = nullptr;
+}
     void RemoveRec(Node* root)
     {
         if (root == nullptr)
@@ -148,30 +164,34 @@ using namespace family;
         RemoveRec(root->mother);
 
         cout << "Deleting node: " << root->name << endl;
+        root->father=root->mother = nullptr;
+
         // after deleting left and right subtree delete current node
+
         delete root;
-        // set root as null before returning
-        //root = nullptr;
+        root = nullptr;
     }
     /* Deletes a tree and sets the root as NULL */
     void deleteSubTree(Node** node_ref)
     {
         RemoveRec(*node_ref);
-        *node_ref = NULL;
+        *node_ref = nullptr;
     }
-void Tree::remove(string person_name)
+    void Tree::remove(string person_name)
     {
         Node* PersonToRemove = findPos(this->root,person_name);
-        if (PersonToRemove == NULL)
-            throw runtime_error("The persong doesn't exist in tree");
+        if (PersonToRemove == nullptr)
+            throw runtime_error("The person doesn't exist in tree");
         if (PersonToRemove == this->root)
             throw runtime_error("Can't remove myself, the root of the tree");
-
-        deleteSubTree(&PersonToRemove);
-        if (root == nullptr)
-            cout << "tree succesfully deleted!";
+        RemoveRec2(PersonToRemove);
+        //deleteSubTree(&PersonToRemove);
+        if (PersonToRemove == nullptr)
+            cout << "tree successfully deleted!";
 
     }
+
+
     // https://www.geeksforgeeks.org/print-binary-tree-2-dimensions/
     void Tree::print2DUtil(Node *root, int space)
     {
@@ -215,4 +235,10 @@ void Tree::remove(string person_name)
     void Tree::printBT(const Node* node)
     {
         printBT("", node, false);
+    }
+
+    string Tree::find(string name)
+    {
+
+        return "k";
     }
