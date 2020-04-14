@@ -19,7 +19,8 @@ int main() {
     .addFather("Yaakov", "Isaac")
     .addMother("Yaakov", "Rivka")
     .addFather("Isaac", "Avraham")
-    .addFather("Avraham", "Terah");
+    .addFather("Avraham", "Terah")
+    .addMother("Terah", "mama");
 	T.display();                        // displays the tree in a human-friendly format.
 
 	cout << T.relation("Yaakov") << endl;  // prints "father"
@@ -39,10 +40,12 @@ int main() {
     } catch (const exception& ex) {
          cout << ex.what() << endl;  // prints "The tree cannot handle the 'uncle' relation"
     }
-
-    T.remove("Avraham"); // removes Avraham and Terah
-    cout << T.relation("Terah") << endl;  // prints "unrelated"
-*/
+    */
+    T.remove("Yaakov");
+    T.display();
+    //T.remove("Avraham"); // removes Avraham and Terah
+   // cout << T.relation("Terah") << endl;  // prints "unrelated"
+    //T.display();
     return 0;
 }
 

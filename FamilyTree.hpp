@@ -33,5 +33,9 @@ namespace family{
         Node * findPos(Node *currentN, string name);
 
          void print2DUtil(Node *root, int space);
+
+         void printBT(const Node *node);
+
+         void printBT(const string &prefix, const Node *node, bool isLeft);
      };
 }

@@ -35,17 +35,22 @@ using namespace family;
     {
         if (currentN->name.compare(name) == 0)
             return currentN;
-        if (currentN->father->name.compare(name)==0)
-            return currentN->father;
-        if (currentN->mother->name.compare(name)==0)
-            return currentN->mother;
+        //if (currentN->father->name.compare(name)==0)
+         //   return currentN->father;
+       // if (currentN->mother->name.compare(name)==0)
+       //     return currentN->mother;
 
-        Node* fromFather = findPos(currentN->father, name);
-        if(fromFather != NULL) return fromFather;
-        Node* fromMother = findPos(currentN->mother, name);
-        if(fromMother != NULL) return fromMother;
-
-        return NULL;
+       if (currentN->father != nullptr)
+       {
+           Node* fromFather = findPos(currentN->father, name);
+           if(fromFather != NULL) return fromFather;
+       }
+        if (currentN->mother != nullptr)
+        {
+            Node* fromMother = findPos(currentN->mother, name);
+            if(fromMother != NULL) return fromMother;
+        }
+        return NULL; // Not Found
     }
     Tree& Tree::addFather(string rootName, string newName)
     {
@@ -95,7 +100,8 @@ using namespace family;
     };
     void Tree::display()
     {
-        print2DUtil(this->root, 0);
+        printBT(this->root);
+        //print2DUtil(this->root, 0);
     };
 
 
@@ -132,9 +138,38 @@ using namespace family;
         }
     }
 
-
-    void Tree::remove(string name)
+    void RemoveRec(Node* root)
     {
+        if (root == nullptr)
+            return;
+
+        //Delete Left and Right Subtree first
+        RemoveRec(root->father);
+        RemoveRec(root->mother);
+
+        cout << "Deleting node: " << root->name << endl;
+        // after deleting left and right subtree delete current node
+        delete root;
+        // set root as null before returning
+        //root = nullptr;
+    }
+    /* Deletes a tree and sets the root as NULL */
+    void deleteSubTree(Node** node_ref)
+    {
+        RemoveRec(*node_ref);
+        *node_ref = NULL;
+    }
+void Tree::remove(string person_name)
+    {
+        Node* PersonToRemove = findPos(this->root,person_name);
+        if (PersonToRemove == NULL)
+            throw runtime_error("The persong doesn't exist in tree");
+        if (PersonToRemove == this->root)
+            throw runtime_error("Can't remove myself, the root of the tree");
+
+        deleteSubTree(&PersonToRemove);
+        if (root == nullptr)
+            cout << "tree succesfully deleted!";
 
     }
     // https://www.geeksforgeeks.org/print-binary-tree-2-dimensions/
@@ -159,4 +194,25 @@ using namespace family;
 
         // Process left child
         print2DUtil(root->mother, space);
+    }
+    // https://stackoverflow.com/questions/36802354/print-binary-tree-in-a-pretty-way-using-c
+    void Tree::printBT(const std::string& prefix, const Node* node, bool isLeft)
+    {
+        if( node != nullptr )
+        {
+            std::cout << prefix;
+
+            std::cout << (isLeft ? "├──" : "└──" );
+
+            // print the value of the node
+            std::cout << node->name << std::endl;
+
+            // enter the next tree level - left and right branch
+            printBT( prefix + (isLeft ? "│   " : "    "), node->father, true);
+            printBT( prefix + (isLeft ? "│   " : "    "), node->mother, false);
+        }
+    }
+    void Tree::printBT(const Node* node)
+    {
+        printBT("", node, false);
     }
