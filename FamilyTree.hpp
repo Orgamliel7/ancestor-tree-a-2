@@ -14,16 +14,42 @@ namespace family{
         string name;
         Node* father;
         Node* mother;
-        int depth;
+        Node *child;
+        int height;
         string parent_type;
+        string relation;
         Node(string name);
         Node();
+        void setRelation(string relation)
+        {
+            this->relation = relation;
+        }
+        string getRelation()
+        {
+            return this->relation;
+        }
+        void setHeight(int h)
+        {
+            this->height=h;
+        };
+        int getHeight()
+        {
+            return this->height;
+        }
+        string getParentType()
+        {
+            return this->parent_type;
+        };
+        void setParentType(string type)
+        {
+            this->parent_type=type;
+        };
     };
-     class Tree{
-     public:
-         Node* root;
-     public:
-         Tree(string name);
+    class Tree{
+    public:
+        Node* root;
+    public:
+        Tree(string name);
         Tree& addFather(string rootName, string name2);
         Tree& addMother(string rootName, string name2);
         void display();
@@ -31,11 +57,11 @@ namespace family{
         std::string find(string name);
         void remove(string name);
         Node * findPos(Node *currentN, string name);
-
-         void print2DUtil(Node *root, int space);
-
-         void printBT(const Node *node);
-
-         void printBT(const string &prefix, const Node *node, bool isLeft);
-     };
+        Node* findPosByType(Node* currentN, string name);
+        void print2DUtil(Node *root, int space);
+        Node* getRoot(){ return this->root;}
+        void deleteSubTree(Node *&node);
+        ~Tree();
+    };
 }
+

@@ -1,244 +1,223 @@
 //
-// Created by Shahar & Tzach on 03/04/2020.
+// Created by Tzach on 03/04/2020.
 //
 #include "FamilyTree.hpp"
 #define COUNT 10
 using namespace std;
 using namespace family;
-    Node::Node()
-    {
-        this->name = "";
-        this->father = nullptr;
-        this->mother = nullptr;
-        this->depth=0;
-        this->parent_type = "me";
-    }
-    Node::Node(string name)
-    {
-        this->name = name;
-        father=mother=NULL;
-        depth = 0;
-        parent_type = "unknown";
-    }
-    Tree::Tree(string name)
-    {
-        root = new Node;
-        root->name = name;
-        root->father= nullptr;
-        root->mother = nullptr;
-        root->depth = 0;
-        root->parent_type = "me";
-    }
-   /* take Node and name to search for */
-   /*  */
-    Node* Tree::findPos(Node* currentN, string name)
-    {
-        if (currentN->name.compare(name) == 0)
-            return currentN;
-        //if (currentN->father->name.compare(name)==0)
-         //   return currentN->father;
-       // if (currentN->mother->name.compare(name)==0)
-       //     return currentN->mother;
-
-       if (currentN->father != nullptr)
-       {
-           Node* fromFather = findPos(currentN->father, name);
-           if(fromFather != NULL) return fromFather;
-       }
-        if (currentN->mother != nullptr)
-        {
-            Node* fromMother = findPos(currentN->mother, name);
-            if(fromMother != NULL) return fromMother;
-        }
-        return NULL; // Not Found
-    }
-    Tree& Tree::addFather(string rootName, string newName)
-    {
-        Node *curr = findPos(this->root, rootName);
-        if (curr != NULL)
-        {
-            if (curr->father == NULL)
-            {
-                curr->father = new Node(newName);
-                curr->father->parent_type = "father";
-            }
-            else
-            {
-                string test = "'" + rootName + "' already have a father!!";
-                throw invalid_argument(test);
-            }
-        }
-        else // we didn't find the root name
-        {
-            string test = "Could'nt find '" + rootName + "'";
-            throw invalid_argument(test);
-        }
-        return *this;
-    };
-    Tree& Tree::addMother(string rootName, string newName)
-    {
-        Node *curr = findPos(this->root, rootName);
-        if (curr != NULL)
-        {
-            if (curr->mother == NULL)
-            {
-                curr->mother = new Node(newName);
-                curr->mother->parent_type = "mother";
-            }
-            else
-            {
-                string test = "'" + rootName + "' already have a mother!!";
-                throw invalid_argument(test);
-            }
-        }
-        else // we didn't find the root name
-        {
-            string test = "Could'nt find '" + rootName + "'";
-            throw invalid_argument(test);
-        }
-        return *this;
-    };
-    void Tree::display()
-    {
-        //printBT(this->root);
-        print2DUtil(this->root, 0);
-    };
-
-    string getRelationName(int depth)
-    {
-        if (depth <= 1)
-        {
-            return "";
-        }
-        if (depth == 2)
-        {
-            return "grand";
-        }
-        string ans = "";
-        for (int i = 2; i < depth; i++)
-        {
-            ans = ans + "great-";
-        }
-        ans = ans + "grand";
-        return ans;
-    }
-
-    string Tree::relation(string who)
-    {
-        Node *curr = findPos(this->root, who);
-        if (curr != NULL)
-        {
-            string ans = getRelationName(curr->depth);
-            ans = ans + curr->parent_type; // should be parent type?
-            return ans;
-        }
-        else
-        {
-            return "unrelated";
-        }
-    }
-void RemoveRec2(Node* root)
+Node::Node()
 {
-    if (root == nullptr)
-        return;
+    this->name = "";
+    this->father = nullptr;
+    this->mother = nullptr;
+    this->child = nullptr;
+    this->height= 0;
+    this->parent_type = "me";
+    this->relation = "";
+}
+Node::Node(string name)
+{
+    this->name = name;
+    father=mother=NULL;
+    child = NULL;
+    height = 0;
+    parent_type = "unknown";
+    relation = "";
+}
+Tree::Tree(string name)
+{
+    root = new Node;
+    root->name = name;
+    root->father= nullptr;
+    root->mother = nullptr;
+    root->child = nullptr;
+    root->setHeight(0);
+    root->parent_type = "me";
+    root->setRelation(relation(name));
+}
 
-    //Delete Left and Right Subtree first
-    RemoveRec2(root->father);
-    RemoveRec2(root->mother);
-
-    cout << "Deleting node: " << root->name << endl;
-    root->father=root->mother = nullptr;
-
-    // after deleting left and right subtree delete current node
-
+Tree::~Tree() {
+    deleteSubTree(root->father);
+    deleteSubTree(root->mother);
     delete root;
     root = nullptr;
 }
-    void RemoveRec(Node* root)
-    {
-        if (root == nullptr)
-            return;
 
-        //Delete Left and Right Subtree first
-        RemoveRec(root->father);
-        RemoveRec(root->mother);
-
-        cout << "Deleting node: " << root->name << endl;
-        root->father=root->mother = nullptr;
-
-        // after deleting left and right subtree delete current node
-
-        delete root;
-        root = nullptr;
+/* take Node and name to search for */
+/*  */
+Node* Tree::findPos(Node* currentN, string name)
+{
+    if (currentN->name.compare(name) == 0)
+        return currentN;
+    if(currentN->father!= nullptr) {
+        Node *fromFather = findPos(currentN->father, name);
+        if (fromFather != NULL) return fromFather;
     }
-    /* Deletes a tree and sets the root as NULL */
-    void deleteSubTree(Node** node_ref)
-    {
-        RemoveRec(*node_ref);
-        *node_ref = nullptr;
+    if(currentN->mother!= nullptr) {
+        Node *fromMother = findPos(currentN->mother, name);
+        if (fromMother != NULL) return fromMother;
     }
-    void Tree::remove(string person_name)
+    return NULL;
+}
+Tree& Tree::addFather(string rootName, string newName)
+{
+    Node *curr = findPos(this->root, rootName);
+    if (curr != NULL)
     {
-        Node* PersonToRemove = findPos(this->root,person_name);
-        if (PersonToRemove == nullptr)
-            throw runtime_error("The person doesn't exist in tree");
-        if (PersonToRemove == this->root)
-            throw runtime_error("Can't remove myself, the root of the tree");
-        RemoveRec2(PersonToRemove);
-        //deleteSubTree(&PersonToRemove);
-        if (PersonToRemove == nullptr)
-            cout << "tree successfully deleted!";
-
-    }
-
-
-    // https://www.geeksforgeeks.org/print-binary-tree-2-dimensions/
-    void Tree::print2DUtil(Node *root, int space)
-    {
-        // Base case
-        if (root == NULL)
-            return;
-
-        // Increase distance between levels
-        space += COUNT;
-
-        // Process right child first
-        print2DUtil(root->father, space);
-
-        // Print current node after space
-        // count
-        cout<<endl;
-        for (int i = COUNT; i < space; i++)
-            cout<<" ";
-        cout<<root->name<<"\n";
-
-        // Process left child
-        print2DUtil(root->mother, space);
-    }
-    // https://stackoverflow.com/questions/36802354/print-binary-tree-in-a-pretty-way-using-c
-    void Tree::printBT(const std::string& prefix, const Node* node, bool isLeft)
-    {
-        if( node != nullptr )
+        if (curr->father == NULL)
         {
-            std::cout << prefix;
-
-            std::cout << (isLeft ? "├──" : "└──" );
-
-            // print the value of the node
-            std::cout << node->name << std::endl;
-
-            // enter the next tree level - left and right branch
-            printBT( prefix + (isLeft ? "│   " : "    "), node->father, true);
-            printBT( prefix + (isLeft ? "│   " : "    "), node->mother, false);
+            curr->father = new Node(newName);
+            curr->father->setParentType("father");
+            curr->father->setHeight(curr->getHeight()+1);
+            curr->father->setRelation(relation(newName));
+            if(curr->father!= nullptr)
+            curr->father->child = curr;
+            if(curr->mother!= nullptr)
+            curr->mother->child = curr;
+        }
+        else
+        {
+            string test = "'" + rootName + "' already have a father!!";
+            throw invalid_argument(test);
         }
     }
-    void Tree::printBT(const Node* node)
+    else // we didn't find the root name
     {
-        printBT("", node, false);
+        string test = "Could'nt find '" + rootName + "'";
+        throw invalid_argument(test);
     }
-
-    string Tree::find(string name)
+    return *this;
+};
+Tree& Tree::addMother(string rootName, string newName)
+{
+    Node *curr = findPos(this->root, rootName);
+    if (curr != NULL)
     {
-
-        return "k";
+        if (curr->mother == NULL)
+        {
+            curr->mother = new Node(newName);
+            curr->mother->setParentType("mother");
+            curr->mother->setHeight(curr->getHeight()+1);
+            curr->mother->setRelation(relation(newName));
+            if(curr->father!= nullptr)
+            curr->father->child = curr;
+            if(curr->mother!= nullptr)
+            curr->mother->child = curr;
+        }
+        else
+        {
+            string test = "'" + rootName + "' already have a mother!!";
+            throw invalid_argument(test);
+        }
     }
+    else // we didn't find the root name
+    {
+        string test = "Could'nt find '" + rootName + "'";
+        throw invalid_argument(test);
+    }
+    return *this;
+};
+void Tree::display()
+{
+    print2DUtil(this->root, 0);
+};
+string Tree::relation(string who) {
+    Node* curr=findPos(this->root,who);
+    string ans;
+    if(curr==NULL)
+        return "unrelated";
+    if(curr==this->getRoot()) return "me";
+    for (int i = 2; i < curr->getHeight(); ++i)
+        ans+="great-";
+    if(curr->getHeight()>1) {
+        ans += "grand";
+    }
+    if(curr->getParentType() == "father") {
+        ans += "father";
+    }
+    if(curr->getParentType()=="mother") {
+        ans += "mother";
+    }
+    return ans;
+};
+
+// https://www.geeksforgeeks.org/print-binary-tree-2-dimensions/
+void Tree::print2DUtil(Node *root, int space)
+{
+    // Base case
+    if (root == NULL)
+        return;
+
+    // Increase distance between levels
+    space += COUNT;
+
+    // Process right child first
+    print2DUtil(root->father, space);
+
+    // Print current node after space
+    // count
+    cout<<endl;
+    for (int i = COUNT; i < space; i++)
+        cout<<" ";
+    cout<<root->name<<"\n";
+
+    // Process left child
+    print2DUtil(root->mother, space);
+}
+Node* Tree::findPosByType(Node* currentN, string name)
+{
+    if(currentN == nullptr)
+        return nullptr;
+    if (currentN->getRelation().compare(name) == 0)
+        return currentN;
+    if(currentN->father!= nullptr)
+    {
+        Node *fromFather = findPosByType(currentN->father, name);
+        if (fromFather != NULL)
+            return fromFather;
+    }
+    if(currentN->mother!= nullptr)
+    {
+        Node *fromMother = findPosByType(currentN->mother, name);
+        if (fromMother != NULL) return fromMother;
+    }
+    return NULL;
+}
+string family::Tree::find(string type)
+{
+    Node* curr = findPosByType(root,type);
+    if(curr==nullptr) throw std::out_of_range("The tree cannot handle the 'uncle' relation");
+    return curr->name;
+};
+void Tree::remove(string person_name)
+{
+    Node* PersonToRemove = findPos(this->root,person_name);
+    if (PersonToRemove == nullptr)
+        throw runtime_error("The person doesn't exist in tree");
+    if (PersonToRemove == root)
+        throw runtime_error("Can't remove myself, the root of the tree");
+    if(PersonToRemove == PersonToRemove->child->father)
+    {
+        PersonToRemove->child->father = nullptr;
+    }
+    else
+        {
+            PersonToRemove->child->mother = nullptr;
+        }
+    deleteSubTree(PersonToRemove);
+    //deleteSubTree(&PersonToRemove);
+    if (PersonToRemove == nullptr)
+        cout << "tree successfully deleted!";
+}
+void Tree::deleteSubTree(Node *&node) {
+    if (node == nullptr) {
+        return;
+    }
+    deleteSubTree(node->father);
+    deleteSubTree(node->mother);
+    node->father = nullptr;
+    node->mother = nullptr;
+    node->child = nullptr;
+    delete node;
+    node = nullptr;//We don't want a dangling pointer
+}
