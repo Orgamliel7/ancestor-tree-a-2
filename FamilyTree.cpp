@@ -5,7 +5,7 @@
 #define COUNT 10
 using namespace std;
 using namespace family;
-Node::Node()
+Node::Node()   // בנאי דיפולטיבי Node
 {
     this->name = "";
     this->father = nullptr;
@@ -15,7 +15,8 @@ Node::Node()
     this->parent_type = "me";
     this->relation = "";
 }
-Node::Node(string name)
+Node::Node(string name)  // בנאי השמה Node
+{
 {
     this->name = name;
     father=mother=NULL;
@@ -45,30 +46,30 @@ Tree::~Tree() { //  דיסטרקטור לעץ שקורא לפונקציה רקו
 
 /* take Node and name to search for */
 /*  */
-Node* Tree::findPos(Node* currentN, string name)
+Node* Tree::findPos(Node* currentN, string name) // חיפוש השם בעץ ע"י קבלתו כפלט יחד עם מצביע לקודקוד כלשהוא והחזרת מצביע לקודקוד שלו אם הוא קיים
 {
     if (currentN->name.compare(name) == 0)
         return currentN;
-    if(currentN->father!= nullptr) {
+    if(currentN->father!= nullptr) { // אם יש לקודקוד אבא, נפעיל עליו רקורסיבית
         Node *fromFather = findPos(currentN->father, name);
-        if (fromFather != NULL) return fromFather;
+        if (fromFather != NULL) return fromFather; 
     }
-    if(currentN->mother!= nullptr) {
+    if(currentN->mother!= nullptr) {  // אם יש לקודקוד אמא, נפעיל עליו רקורסיבית
         Node *fromMother = findPos(currentN->mother, name);
         if (fromMother != NULL) return fromMother;
     }
     return NULL;
 }
-Tree& Tree::addFather(string rootName, string newName)
+Tree& Tree::addFather(string rootName, string newName) // הוספת אב למישהו שכבר נמצא בעץ
 {
-    Node *curr = findPos(this->root, rootName);
-    if (curr != NULL)
+    Node *curr = findPos(this->root, rootName); // מציאת מיקומו ע"י פונ' עזר שכתבנו
+    if (curr != NULL) 
     {
-        if (curr->father == NULL)
+        if (curr->father == NULL)  // אם מצאנו את המיקום והוא אכן ריק, כלומר אין אבא, אז נוסיף אותו ונעדכן את העץ
         {
-            curr->father = new Node(newName);
+            curr->father = new Node(newName); 
             curr->father->setParentType("father");
-            curr->father->setHeight(curr->getHeight()+1);
+            curr->father->setHeight(curr->getHeight()+1); // הוספת גובה לאבא החדש, כמו הבן פלוס אחד
             curr->father->setRelation(relation(newName));
             if(curr->father!= nullptr)
             curr->father->child = curr;
@@ -77,7 +78,7 @@ Tree& Tree::addFather(string rootName, string newName)
         }
         else
         {
-            string test = "'" + rootName + "' already have a father!!";
+            string test = "'" + rootName + "' already have a father!!"; // כבר יש לאותו קודקוד אבא.. לכן נזרוק שגיאה
             throw invalid_argument(test);
         }
     }
@@ -88,12 +89,13 @@ Tree& Tree::addFather(string rootName, string newName)
     }
     return *this;
 };
-Tree& Tree::addMother(string rootName, string newName)
+Tree& Tree::addMother(string rootName, string newName)  // הוספת אם למישהו שכבר נמצא בעץ
 {
-    Node *curr = findPos(this->root, rootName);
+{
+    Node *curr = findPos(this->root, rootName); // מציאת מיקומו ע"י פונ' עזר שכתבנו
     if (curr != NULL)
     {
-        if (curr->mother == NULL)
+        if (curr->mother == NULL)  // אם מצאנו את המיקום והוא אכן ריק, כלומר אין אמא, אז נוסיף אותה ונעדכן את העץ
         {
             curr->mother = new Node(newName);
             curr->mother->setParentType("mother");
@@ -121,7 +123,7 @@ void Tree::display()
 {
     print2DUtil(this->root, 0);
 };
-string Tree::relation(string who) {
+string Tree::relation(string who) { // מקבלת שם של מישהו שנמצא בעץ, ומחזירה את היחס בינו לבינינו
     Node* curr=findPos(this->root,who);
     string ans;
     if(curr==NULL)
@@ -164,7 +166,7 @@ void Tree::print2DUtil(Node *root, int space)
     // Process left child
     print2DUtil(root->mother, space);
 }
-Node* Tree::findPosByType(Node* currentN, string name)
+Node* Tree::findPosByType(Node* currentN, string name) // מציאת מיקום ע"י היחס
 {
     if(currentN == nullptr)
         return nullptr;
@@ -183,7 +185,7 @@ Node* Tree::findPosByType(Node* currentN, string name)
     }
     return NULL;
 }
-string family::Tree::find(string type)
+string family::Tree::find(string type) // מקבלת מחרוזת המציינת יחס, ומחזירה את שם האדם מהעץ המקיים יחס זה.
 {
     Node* curr = findPosByType(root,type);
     if(curr==nullptr) throw std::out_of_range("The tree cannot handle the 'uncle' relation");
