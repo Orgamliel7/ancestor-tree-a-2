@@ -1,6 +1,4 @@
-//
-// Created by Tzach on 03/04/2020.
-//
+
 #include "FamilyTree.hpp"
 #define COUNT 10
 using namespace std;
