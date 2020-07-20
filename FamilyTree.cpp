@@ -24,7 +24,7 @@ Node::Node(string name)
     parent_type = "unknown";
     relation = "";
 }
-Tree::Tree(string name)
+Tree::Tree(string name) // בנאי לעץ שמקבל מחרוזת שתהיה שמו של השורש
 {
     root = new Node;
     root->name = name;
@@ -36,7 +36,7 @@ Tree::Tree(string name)
     root->setRelation(relation(name));
 }
 
-Tree::~Tree() {
+Tree::~Tree() { //  דיסטרקטור לעץ שקורא לפונקציה רקורסיבית המפרקת תת עץ ימני ותת עץ שמאלי
     deleteSubTree(root->father);
     deleteSubTree(root->mother);
     delete root;
@@ -219,5 +219,5 @@ void Tree::deleteSubTree(Node *&node) {
     node->mother = nullptr;
     node->child = nullptr;
     delete node;
-    node = nullptr;//We don't want a dangling pointer
+    node = nullptr;//We don't want a dangling pointer כי המצביע יצביע לאובייקט שלא קיים עוד 
 }
