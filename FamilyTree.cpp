@@ -46,7 +46,7 @@ Tree::~Tree() { //  דיסטרקטור לעץ שקורא לפונקציה רקו
 /*  */
 Node* Tree::findPos(Node* currentN, string name) // חיפוש השם בעץ ע"י קבלתו כפלט יחד עם מצביע לקודקוד כלשהוא והחזרת מצביע לקודקוד שלו אם הוא קיים
 {
-    if (currentN->name.compare(name) == 0)
+    if (currentN->name.compare(name) == 0) // זה הקודקוד הספציפי ששלחנו לפונקציה
         return currentN;
     if(currentN->father!= nullptr) { // אם יש לקודקוד אבא, נפעיל עליו רקורסיבית
         Node *fromFather = findPos(currentN->father, name);
@@ -142,16 +142,16 @@ string Tree::relation(string who) { // מקבלת שם של מישהו שנמצ�
 };
 
 // https://www.geeksforgeeks.org/print-binary-tree-2-dimensions/
-void Tree::print2DUtil(Node *root, int space)
+void Tree::print2DUtil(Node *root, int space) // הצגת העץ, לצורך הדגמה וניפוי שגיאות
 {
-    // Base case
+    // edge case אם העץ ריק
     if (root == NULL)
         return;
 
-    // Increase distance between levels
+    // Increase distance between levels נעלה בהתאם את המרחק בין דרגות העץ
     space += COUNT;
 
-    // Process right child first
+    // Process right child first 
     print2DUtil(root->father, space);
 
     // Print current node after space
@@ -166,9 +166,9 @@ void Tree::print2DUtil(Node *root, int space)
 }
 Node* Tree::findPosByType(Node* currentN, string name) // מציאת מיקום ע"י היחס
 {
-    if(currentN == nullptr)
+    if(currentN == nullptr) // אם המצביע לקודקוד ריק
         return nullptr;
-    if (currentN->getRelation().compare(name) == 0)
+    if (currentN->getRelation().compare(name) == 0) // אם היחס של קודקוד הקלט תואם ליחס הנדרש, נחזיר אותו
         return currentN;
     if(currentN->father!= nullptr)
     {
@@ -189,27 +189,27 @@ string family::Tree::find(string type) // מקבלת מחרוזת המציינת
     if(curr==nullptr) throw std::out_of_range("The tree cannot handle the 'uncle' relation");
     return curr->name;
 };
-void Tree::remove(string person_name)
+void Tree::remove(string person_name) // מקבלת שם של מישהו שנמצא בעץ, ומוחקת אותו ואת כל ההורים שלו מהעץ
 {
-    Node* PersonToRemove = findPos(this->root,person_name);
-    if (PersonToRemove == nullptr)
+    Node* PersonToRemove = findPos(this->root,person_name); // ניעזר בפונ' העזר שתקבל את השורש ושמו של האדם, ותחזיר את המצביע לקודקוד שלו
+    if (PersonToRemove == nullptr)     //  אם לא מצאנו אותו, כלומר המצביע ריק - נזרוק שגיאה
         throw runtime_error("The person doesn't exist in tree");
-    if (PersonToRemove == root)
+    if (PersonToRemove == root) //  אם קודקוד הקלט זה השורש נזרוק שגיאה
         throw runtime_error("Can't remove myself, the root of the tree");
-    if(PersonToRemove == PersonToRemove->child->father)
+    if(PersonToRemove == PersonToRemove->child->father) // אם זה האבא נמחק אותו
     {
         PersonToRemove->child->father = nullptr;
     }
     else
         {
-            PersonToRemove->child->mother = nullptr;
+            PersonToRemove->child->mother = nullptr;  // אם זה האמא נמחק אותה
         }
     deleteSubTree(PersonToRemove);
-    //deleteSubTree(&PersonToRemove);
+  
     if (PersonToRemove == nullptr)
         cout << "tree successfully deleted!";
 }
-void Tree::deleteSubTree(Node *&node) {
+void Tree::deleteSubTree(Node *&node) { // פונקציית עזר למחיקת תתי עצים , אבא ואמא
     if (node == nullptr) {
         return;
     }
