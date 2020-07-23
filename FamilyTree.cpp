@@ -43,7 +43,7 @@ Tree::~Tree() { //  דיסטרקטור לעץ שקורא לפונקציה רקו
 }
 
 /* take Node and name to search for */
-/*  */
+// 
 Node* Tree::findPos(Node* currentN, string name) // חיפוש השם בעץ ע"י קבלתו כפלט יחד עם מצביע לקודקוד כלשהוא והחזרת מצביע לקודקוד שלו אם הוא קיים
 {
     if (currentN->name.compare(name) == 0) // זה הקודקוד הספציפי ששלחנו לפונקציה
